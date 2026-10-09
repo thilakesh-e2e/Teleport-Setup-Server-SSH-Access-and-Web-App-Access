@@ -1,6 +1,6 @@
 # SOP: Teleport Setup – Server, SSH Access and Web App Access
 
-Prepared by: << user name >>, E2E Networks Ltd. | Type: Lab SOP | Teleport version: 18.11.3
+Prepared by: Thilakesh R, E2E Networks Ltd. | Type: Lab SOP | Teleport version: 18.11.3
 
 ## 1. Purpose
 
