@@ -215,6 +215,43 @@ Failed to establish reverse tunnel ... x509: certificate signed by unknown autho
 The app service connects back to the proxy over a reverse tunnel. It rejected the proxy's self-signed certificate, so the app could not register.
 
 **Fix (lab only):** run Teleport with the `--insecure` flag.
+Fix
+
+1. See how the service starts:
+
+bash
+systemctl cat teleport | grep ExecStart
+
+It will look something like ExecStart=/usr/local/bin/teleport start --config /etc/teleport.yaml --pid-file=/run/teleport.pid. Note the exact path and flags.
+
+2. Add --insecure with an override:
+
+bash
+systemctl edit teleport
+
+In the editor that opens, paste this (use the same binary path and flags you saw above, plus --insecure):
+
+[Service]
+ExecStart=
+ExecStart=/usr/local/bin/teleport start --config /etc/teleport.yaml --pid-file=/run/teleport.pid --insecure
+
+Save and exit (Ctrl+O, Enter, Ctrl+X).
+
+3. Restart and check:
+
+bash
+systemctl daemon-reload
+systemctl restart teleport
+sleep 30
+journalctl -u teleport --since "1 min ago" --no-pager | grep -i -E "reverse tunnel|certificate|error"
+
+The certificate errors should stop appearing.
+
+4. Launch again: log in at https://164.52.208.239.sslip.io, go to Resources → Applications, and click Launch on nginx-app. Accept the browser warning with Advanced → Proceed.
+
+Notes
+--insecure is fine for this learning task. In production you’d use a real certificate (Let’s Encrypt with a real domain), and tell your TL that’s why.
+If the error persists, paste the output of systemctl cat teleport | grep ExecStart and the new journalctl lines.
 
 **Why it is acceptable here:** the lab uses a self-signed certificate and everything runs on one host. `--insecure` tells Teleport to skip certificate verification, which removes the error. It must **not** be used in production.
 
