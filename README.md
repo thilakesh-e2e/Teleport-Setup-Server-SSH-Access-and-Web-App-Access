@@ -82,9 +82,7 @@ ssh root@<< public ip >>
 ```bash
 curl https://apt.releases.teleport.dev/gpg -o /usr/share/keyrings/teleport-archive-keyring.asc
 source /etc/os-release
-KEYRING=/usr/share/keyrings/teleport-archive-keyring.asc
-REPO=https://apt.releases.teleport.dev/${ID?}
-echo "deb [signed-by=${KEYRING}] ${REPO} ${VERSION_CODENAME?} stable/v18" | tee /etc/apt/sources.list.d/teleport.list > /dev/null
+echo "deb [signed-by=/usr/share/keyrings/teleport-archive-keyring.asc] https://apt.releases.teleport.dev/${ID?} ${VERSION_CODENAME?} stable/v18" | tee /etc/apt/sources.list.d/teleport.list > /dev/null
 apt-get update
 apt-get install -y teleport
 ```
